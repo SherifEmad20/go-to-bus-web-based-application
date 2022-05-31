@@ -287,41 +287,6 @@ public List<Trip> SearchTrips(UserxTrip t)
 			
 	}
 
-@GET	
-@Path("viewtrips/{idd}")
-@Produces(MediaType.APPLICATION_JSON)
-public List UserTrips(@PathParam("idd")int userID)
-{
-	User user = entitymanager.createQuery(
-			  "SELECT u from User u WHERE u.id = :userID", User.class).
-			setParameter("userID",userID ).getSingleResult();
-	
-	
-	return user.trips;
-	
-}
-
-@GET	
-@Path("notifications/{idd}")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-public List UserNotifications(@PathParam("idd")int userID)
-{
-	User user = entitymanager.createQuery(
-			  "SELECT u from User u WHERE u.id = :userID", User.class).
-			setParameter("userID",userID).getSingleResult();
-	List<Notification> un = user.UserNotifications;
-	
-
-		
-	
-	
-	
-	return user.UserNotifications;
-	
-}
-
-
 
 
 
