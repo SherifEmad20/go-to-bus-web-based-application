@@ -127,6 +127,30 @@ public Station GetStation(@PathParam("idd") int id)
 	return st;
 }
 
+@POST
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Path("trip")
+public String CreateTrip(Trip t)
+{
+	try 
+	{
+		String at = t.arrival_time;
+		t.setArrival_time(at);
+	
+		
+		
+		entitymanager.persist(t);
+		return "Success "+ t.getArrival_time()+" "+t.getDeparture_time();
+	}
+		catch (Exception e)
+	{
+		throw new EJBException(e);
+	}
+}
+
+
+
 
 
 
