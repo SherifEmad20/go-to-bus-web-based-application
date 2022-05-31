@@ -16,7 +16,7 @@ public class Station {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
-	//@Column(name="name")
+	
 	public String name;
 	 String longitude;
 	String latitude;
@@ -29,8 +29,8 @@ public class Station {
 	public String getStationName() {
 		return name;
 	}
-	public void setStationName(String stationName) {
-		name = stationName;
+	public void setStationName(String Name) {
+		name = Name;
 	}
 	public String getLongitude() {
 		return longitude;

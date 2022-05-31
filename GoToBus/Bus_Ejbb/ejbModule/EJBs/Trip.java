@@ -28,8 +28,8 @@ public class Trip {
 	
 	
 	
-	//@ManyToMany(mappedBy="trips",fetch=FetchType.LAZY)
-	//private Set<User> users;
+//@ManyToMany(mappedBy="trips",fetch = FetchType.LAZY)
+//public Set<User> usrs;
 	
 	public int getId() {
 		return id;

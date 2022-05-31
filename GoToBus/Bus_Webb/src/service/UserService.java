@@ -1,8 +1,12 @@
 package service;
 
-import java.awt.List;
-import java.util.ArrayList;
 
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -10,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 //import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,7 +25,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import EJBs.Notification;
 import EJBs.Station;
+import EJBs.Trip;
 import EJBs.User;
 
 
@@ -97,12 +104,10 @@ public String CreateStation(Station s)
 	{
 		String name = s.name;
 		s.setStationName(name);
-		String n = s.getStationName();
-		String l = s.getLongitude();
-		String la = s.getLatitude();
+		
 		
 		entitymanager.persist(s);
-		return "Success :" +n+" "+ l+" "+la ;
+		return "Success " + s.getId() ;
 	}
 		catch (Exception e)
 	{
@@ -110,7 +115,22 @@ public String CreateStation(Station s)
 	}
 	
 }
-	
+
+@GET
+@Produces(MediaType.APPLICATION_JSON)
+@Path("station_id/{idd}")
+public Station GetStation(@PathParam("idd") int id)
+{
+	Station st = entitymanager.createQuery(
+			  "SELECT u from Station u WHERE u.id = :ID", Station.class).
+			setParameter("ID",id ).getSingleResult();
+	return st;
+}
+
+
+
+
+
 
 @GET	
 @Path("hello")
