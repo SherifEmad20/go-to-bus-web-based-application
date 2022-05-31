@@ -301,7 +301,25 @@ public List UserTrips(@PathParam("idd")int userID)
 	
 }
 
+@GET	
+@Path("notifications/{idd}")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public List UserNotifications(@PathParam("idd")int userID)
+{
+	User user = entitymanager.createQuery(
+			  "SELECT u from User u WHERE u.id = :userID", User.class).
+			setParameter("userID",userID).getSingleResult();
+	List<Notification> un = user.UserNotifications;
+	
 
+		
+	
+	
+	
+	return user.UserNotifications;
+	
+}
 
 
 
