@@ -149,7 +149,177 @@ public String CreateTrip(Trip t)
 	}
 }
 
+public static class UserxTrip{
+int user_id;
+int trip_id;
+String from_date;
+String to_date;
+int from_station;
+int to_station;
+public String getFrom_date() {
+	return from_date;
+}
+public void setFrom_date(String from_date) {
+	this.from_date = from_date;
+}
+public String getTo_date() {
+	return to_date;
+}
+public void setTo_date(String to_date) {
+	this.to_date = to_date;
+}
+public int getFrom_station() {
+	return from_station;
+}
+public void setFrom_station(int from_station) {
+	this.from_station = from_station;
+}
+public int getTo_station() {
+	return to_station;
+}
+public void setTo_station(int to_station) {
+	this.to_station = to_station;
+}
 
+public int getUser_id() {
+	return user_id;
+}
+public void setUser_id(int user_id) {
+	this.user_id = user_id;
+}
+public int getTrip_id() {
+	return trip_id;
+}
+public void setTrip_id(int trip_id) {
+	this.trip_id = trip_id;
+}
+
+}
+
+@POST
+@Path("booktrip")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public String BookTrip(UserxTrip ut)
+{
+	try 
+	{
+		int user_id = ut.getUser_id();
+		int trip_id = ut.getTrip_id();
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");  
+		   LocalDateTime now = LocalDateTime.now(); 
+		   String dato = dtf.format(now);
+		   Notification notf = new Notification() ;
+		
+		
+		User user = entitymanager.createQuery(
+				  "SELECT u from User u WHERE u.id = :userID", User.class).
+				setParameter("userID",user_id ).getSingleResult();
+		
+		Trip tr = entitymanager.createQuery(
+				  "SELECT u from Trip u WHERE u.id = :tripID",Trip.class).
+				setParameter("tripID",trip_id ).getSingleResult();
+		
+		user.trips.add(tr);
+		String message = "You have booked trip from " +tr.getFrom_station() + " to " + tr.getTo_station()+" successfully";
+		
+		
+		notf.message=message;
+		notf.notification_datetime=dato;
+		user.UserNotifications.add(notf);
+		
+		
+		try 
+		{
+			
+			entitymanager.persist(notf);
+			return "Success";
+			
+			
+		}
+		
+		catch (Exception e)
+		{
+			throw new EJBException(e);
+		}
+		
+		
+		
+		
+		
+		
+	}
+		catch (Exception e)
+	{
+		throw new EJBException(e);
+	}
+}
+
+@POST
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+@Path("searchtrips")
+public List<Trip> SearchTrips(UserxTrip t)
+{
+	String FromDate = t.getFrom_date();
+	String ToDate = t.getTo_date();
+	int ToStation=t.getTo_station();
+	int FromStation=t.getFrom_station();
+	Station ToStat = entitymanager.createQuery(
+			  "SELECT u from Station u WHERE u.id = :statID", Station.class).
+			setParameter("statID",ToStation ).getSingleResult();
+	Station FromStat = entitymanager.createQuery(
+			  "SELECT u from Station u WHERE u.id = :statID", Station.class).
+			setParameter("statID",FromStation ).getSingleResult();
+	
+	String ToStatName=ToStat.name;
+	String FromStatName=FromStat.name;
+	
+	         List<Trip> t1 = entitymanager.createQuery("SELECT u from Trip u WHERE u.from_station= :fromstat AND u.to_station = :tostat AND u.departure_time LIKE '" + FromDate +"%' AND u.arrival_time LIKE '" + ToDate+"%' " , Trip.class).
+	        		 setParameter("fromstat", FromStatName).
+	        		 setParameter("tostat", ToStatName).
+	        		 getResultList();
+	        	
+			 
+			
+			return  t1;
+			
+			
+	}
+
+@GET	
+@Path("viewtrips/{idd}")
+@Produces(MediaType.APPLICATION_JSON)
+public List UserTrips(@PathParam("idd")int userID)
+{
+	User user = entitymanager.createQuery(
+			  "SELECT u from User u WHERE u.id = :userID", User.class).
+			setParameter("userID",userID ).getSingleResult();
+	
+	
+	return user.trips;
+	
+}
+
+@GET	
+@Path("notifications/{idd}")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public List UserNotifications(@PathParam("idd")int userID)
+{
+	User user = entitymanager.createQuery(
+			  "SELECT u from User u WHERE u.id = :userID", User.class).
+			setParameter("userID",userID).getSingleResult();
+	List<Notification> un = user.UserNotifications;
+	
+
+		
+	
+	
+	
+	return user.UserNotifications;
+	
+}
 
 
 

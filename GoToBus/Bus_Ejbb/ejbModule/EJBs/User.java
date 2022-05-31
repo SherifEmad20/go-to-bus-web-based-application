@@ -48,7 +48,6 @@ public class User {
 public List<Trip> trips;
 
 
-	
 	public int getId() {
 		return id;
 	}
