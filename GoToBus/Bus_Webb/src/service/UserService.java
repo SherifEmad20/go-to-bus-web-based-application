@@ -3,6 +3,7 @@ package service;
 
 
 import java.time.LocalDateTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,8 @@ import EJBs.User;
 //@PermitAll
 
 public class UserService {
+	User CurrentUser;
+
 	
 	boolean flag = false;
 	
@@ -59,7 +62,7 @@ public class UserService {
 			//User u = new User();
 			u.setUserName(us);
 			entitymanager.persist(u);
-			return "Success " ;
+			return "Success" ;
 		}
 			catch (Exception e)
 		{
@@ -88,7 +91,8 @@ public String log(User u1)
 	if (pass.equals(passw))
 	{
 		response = "Login successfuly";
-		flag = true;
+		CurrentUser=user;
+		
 	}
 	
 	else
@@ -108,12 +112,22 @@ public String CreateStation(Station s)
 {
 	try 
 	{
+	
+		String role = CurrentUser.getRole();
+		
+		
+		if(!role.equals("admin"))
+		{
+			return "You are not allowed to access this functions!!!";
+		}
+		
+		
 		String name = s.name;
 		s.setStationName(name);
 		
 		
 		entitymanager.persist(s);
-		return "Success " + s.getId() ;
+		return "Success  " ;
 	}
 		catch (Exception e)
 	{
@@ -143,13 +157,23 @@ public String CreateTrip(Trip t)
 {
 	try 
 	{
+		
+String role = CurrentUser.getRole();
+		
+		
+		if(!role.equals("admin"))
+		{
+			return "You are not allowed to access this functions!!!";
+		}
+		
+
 		String at = t.arrival_time;
 		t.setArrival_time(at);
 	
 		
 		
 		entitymanager.persist(t);
-		return "Success "+ t.getArrival_time()+" "+t.getDeparture_time();
+		return "Success";
 	}
 		catch (Exception e)
 	{
@@ -213,6 +237,8 @@ public String BookTrip(UserxTrip ut)
 {
 	try 
 	{
+
+		
 		int user_id = ut.getUser_id();
 		int trip_id = ut.getTrip_id();
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");  
@@ -231,6 +257,9 @@ public String BookTrip(UserxTrip ut)
 				setParameter("tripID",trip_id ).getSingleResult();
 		
 		user.trips.add(tr);
+		
+		int Seats = tr.getAvailable_seats();
+		tr.setAvailable_seats(Seats-1);
 		String message = "You have booked trip from " +tr.getFrom_station() + " to " + tr.getTo_station()+" successfully";
 		
 		
@@ -308,9 +337,15 @@ public List UserTrips(@PathParam("idd")int userID)
 	User user = entitymanager.createQuery(
 			  "SELECT u from User u WHERE u.id = :userID", User.class).
 			setParameter("userID",userID ).getSingleResult();
+List<Trip> un = user.trips;
 	
+	List<Trip> un2 = new ArrayList() ;
+	for (int i =0 ; i<un.size();i++)
+	{
+		un2.add(un.get(i));
+	}
 	
-	return user.trips;
+	return un2;
 	
 }
 
