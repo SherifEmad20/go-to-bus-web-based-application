@@ -47,7 +47,8 @@ public class User {
 //@JoinColumn(name="trips")
 public List<Trip> trips;
 
-
+@OneToMany
+public List<Notification> UserNotifications;
 	
 	public int getId() {
 		return id;
