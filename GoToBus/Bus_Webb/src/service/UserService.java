@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 //import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
@@ -36,6 +39,7 @@ import EJBs.User;
 
 @Stateless
 @Path("/users")
+//@PermitAll
 
 public class UserService {
 	
@@ -67,6 +71,7 @@ public class UserService {
 @POST
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+
 @Path("login")
 public String log(User u1)
 {
@@ -97,6 +102,7 @@ public String log(User u1)
 
 @POST
 @Consumes(MediaType.APPLICATION_JSON)
+//@RolesAllowed("admin")
 @Path("station")
 public String CreateStation(Station s) 
 {
@@ -119,6 +125,7 @@ public String CreateStation(Station s)
 @GET
 @Produces(MediaType.APPLICATION_JSON)
 @Path("station_id/{idd}")
+
 public Station GetStation(@PathParam("idd") int id)
 {
 	Station st = entitymanager.createQuery(
@@ -130,6 +137,7 @@ public Station GetStation(@PathParam("idd") int id)
 @POST
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+//@RolesAllowed("admin")
 @Path("trip")
 public String CreateTrip(Trip t)
 {
@@ -200,6 +208,7 @@ public void setTrip_id(int trip_id) {
 @Path("booktrip")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+//@RolesAllowed({"admin","client"})
 public String BookTrip(UserxTrip ut)
 {
 	try 
@@ -209,7 +218,8 @@ public String BookTrip(UserxTrip ut)
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");  
 		   LocalDateTime now = LocalDateTime.now(); 
 		   String dato = dtf.format(now);
-		   Notification notf = new Notification() ;
+		  
+		   Notification notf = new Notification();
 		
 		
 		User user = entitymanager.createQuery(
@@ -226,6 +236,7 @@ public String BookTrip(UserxTrip ut)
 		
 		notf.message=message;
 		notf.notification_datetime=dato;
+		
 		user.UserNotifications.add(notf);
 		
 		
@@ -258,6 +269,7 @@ public String BookTrip(UserxTrip ut)
 @POST
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+
 @Path("searchtrips")
 public List<Trip> SearchTrips(UserxTrip t)
 {
@@ -290,6 +302,7 @@ public List<Trip> SearchTrips(UserxTrip t)
 @GET	
 @Path("viewtrips/{idd}")
 @Produces(MediaType.APPLICATION_JSON)
+//@PermitAll
 public List UserTrips(@PathParam("idd")int userID)
 {
 	User user = entitymanager.createQuery(
@@ -305,19 +318,27 @@ public List UserTrips(@PathParam("idd")int userID)
 @Path("notifications/{idd}")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public List UserNotifications(@PathParam("idd")int userID)
+//@RolesAllowed({"admin","client"})
+public List<Notification> UserNotifications(@PathParam("idd")int userID)
 {
 	User user = entitymanager.createQuery(
 			  "SELECT u from User u WHERE u.id = :userID", User.class).
 			setParameter("userID",userID).getSingleResult();
 	List<Notification> un = user.UserNotifications;
 	
+	List<Notification> un2 = new ArrayList() ;
+	for (int i =0 ; i<un.size();i++)
+	{
+		un2.add(un.get(i));
+	}
+	
+	
 
 		
 	
 	
 	
-	return user.UserNotifications;
+	return un2;
 	
 }
 
@@ -328,10 +349,16 @@ public List UserNotifications(@PathParam("idd")int userID)
 
 @GET	
 @Path("hello")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public String getHello()
 {
-	         return "Hello";
+	//List<Notification> n1 = entitymanager.createQuery("SELECT u FROM Notification u").getResultList();
+	
+	
+	return "Hello";
 }
+
 
 @GET	
 @Path("hello_id/{id}")

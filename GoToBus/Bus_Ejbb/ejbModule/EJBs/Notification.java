@@ -10,18 +10,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 @Stateless
 @LocalBean
 @Entity
 public class Notification {
-	
+	//@Transient
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int Message_ID;
 	public String message;
 	public String notification_datetime;
+	
+	//@ManyToOne
+	//@JoinColumn(name="userID")
+	//public User userID;
 
 	
 
