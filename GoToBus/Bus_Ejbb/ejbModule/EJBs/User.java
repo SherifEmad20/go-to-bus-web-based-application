@@ -1,19 +1,9 @@
 package EJBs;
 
-<<<<<<< HEAD
-
-import java.util.ArrayList;
-import java.util.List;
-=======
->>>>>>> efc0d67 (Station Entity)
 import java.util.Set;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-<<<<<<< HEAD
-import javax.persistence.CascadeType;
-=======
->>>>>>> efc0d67 (Station Entity)
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,14 +39,6 @@ public class User {
 	String role;
 	
 	
-<<<<<<< HEAD
-@OneToMany
-//@JoinColumn(name="trips")
-public List<Trip> trips;
-
-@OneToMany
-public List<Notification> UserNotifications;
-=======
 /*	@ManyToMany
 	@JoinTable(
 			name="UserXTrip",
@@ -64,7 +46,6 @@ public List<Notification> UserNotifications;
 			inverseJoinColumns=@JoinColumn(name="trip_id"))
 	Set<Trip> trips;*/
 	
->>>>>>> efc0d67 (Station Entity)
 	
 	public int getId() {
 		return id;
